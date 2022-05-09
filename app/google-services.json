@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "327773002070-or6l1aq57qhn2coqd67kmfp568nkbk2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pokemon",
+            "certificate_hash": "e545e0dc13c55fa1bfe41c23377f7051ce47b35e"
+          }
+        },
+        {
           "client_id": "327773002070-q7b0go4o30ouu34ro5jini12l5ulvfio.apps.googleusercontent.com",
           "client_type": 3
         }
