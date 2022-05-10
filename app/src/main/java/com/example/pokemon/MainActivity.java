@@ -43,8 +43,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Para el Logcat
     private static final String TAG = "GoogleActivity";
+    //Autenticar con el firebase
     private FirebaseAuth mAuth;
+    //Cliente Log In
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -52,17 +55,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Botón de Google
         SignInButton btnGoogle = findViewById(R.id.sign_in_button);
-
+        //Autenticar con el firebase y obtener la instancia
         mAuth = FirebaseAuth.getInstance();
 
+        //Opciones de Loguear Google
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
+        //Obtener la cuenta al mostrar el pop up de cuentas de Google
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        //Al pulsar el boton de Google
         btnGoogle.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -94,17 +101,20 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
+    //Autenticar el firebase con Google
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        // Si se ha registrado sin problemas te mandará a otra actividad
                         if (task.isSuccessful()) {
                             startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
-                            finish();
+
                             Toast.makeText(MainActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
                             Log.i(TAG, "Ha sido un exito", task.getException());
+                        // Si no has podido registrar
                         } else {
                             Toast.makeText(MainActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
                             Log.i(TAG, "Ha sido un fracaso", task.getException());
