@@ -43,12 +43,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Para el Logcat
-    private static final String TAG = "GoogleActivity";
-    //Autenticar con el firebase
-    private FirebaseAuth mAuth;
-    //Cliente Log In
-    private GoogleSignInClient mGoogleSignInClient;
+    private static final String TAG = "GoogleActivity";             //Para el Logcat
+    private FirebaseAuth mAuth;                                     //Autenticar con el firebase
+    private GoogleSignInClient mGoogleSignInClient;                 //Cliente Log In
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,14 +100,18 @@ public class MainActivity extends AppCompatActivity {
 
     //Autenticar el firebase con Google
     private void firebaseAuthWithGoogle(String idToken) {
+        //Obtener las credenciales
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        //Loguear con las credenciales
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // Si se ha registrado sin problemas te mandará a otra actividad
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
+                            startActivity(new Intent(MainActivity.this, pokedex.class));
+                            //Obtener el usuario con sesión activa
+                            FirebaseUser user = mAuth.getCurrentUser();
 
                             Toast.makeText(MainActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
                             Log.i(TAG, "Ha sido un exito", task.getException());
@@ -123,5 +124,4 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }
