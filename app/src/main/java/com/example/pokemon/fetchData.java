@@ -1,5 +1,6 @@
 package com.example.pokemon;
 
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -33,8 +34,8 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
             //Make API connection
-            URL url = new URL("https://pokeapi.co/api/v2/pokemon/" + pokSearch);
-            Log.i("logtest", "https://pokeapi.co/api/v2/pokemon/" + pokSearch);
+            URL url = new URL("https://pokeapi.co/api/v2/type/" + pokSearch);
+            Log.i("logtest", "https://pokeapi.co/api/v2/type/" + pokSearch);
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 
@@ -96,9 +97,9 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         pokedex.txtDisplay.setText(this.results);
 
         // Set main img
-        //SvgLoader.pluck()
-        //        .with(pokedex.act)
-        //        .load(img, pokedex.imgPok);
+        SvgLoader.pluck()
+                .with(pokedex.act)
+                .load(img, pokedex.imgPok);
 
         // Set img types
         for(int i=0; i<strTypes.size(); i++){

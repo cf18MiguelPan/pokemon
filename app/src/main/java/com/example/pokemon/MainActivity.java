@@ -1,38 +1,20 @@
 package com.example.pokemon;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -43,85 +25,99 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "GoogleActivity";             //Para el Logcat
-    private FirebaseAuth mAuth;                                     //Autenticar con el firebase
-    private GoogleSignInClient mGoogleSignInClient;                 //Cliente Log In
+    // Inicializar variables
+    SignInButton btnSignIn;
+    GoogleSignInClient googleSignInClient;
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Botón de Google
-        SignInButton btnGoogle = findViewById(R.id.sign_in_button);
-        //Autenticar con el firebase y obtener la instancia
-        mAuth = FirebaseAuth.getInstance();
+        // asignar variable
+        btnSignIn=findViewById(R.id.sign_in_button);
 
-        //Opciones de Loguear Google
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        // Inicializar las opciones de inicio de sesion
+        GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
-        //Obtener la cuenta al mostrar el pop up de cuentas de Google
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // Inicializar el inicio de sesión del cliente
+        googleSignInClient= GoogleSignIn.getClient(MainActivity.this
+                ,googleSignInOptions);
 
-        //Al pulsar el boton de Google
-        btnGoogle.setOnClickListener(new View.OnClickListener(){
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                resultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent()));
+            public void onClick(View view) {
+
+                // Inicializar sign in intent
+                Intent intent = googleSignInClient.getSignInIntent();
+                startActivityForResult(intent,100);
+
             }
         });
 
+        firebaseAuth=FirebaseAuth.getInstance();                // Inicializar la autenticación firebase
+        FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();// Inicializar el de usuario firebase
+
+        // Cuando el usuario no es nulo
+        if(firebaseUser!=null) {
+            // Desde el MainActivity te redirige a UserProfileActivity
+            startActivity(new Intent(MainActivity.this, UserProfileActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); //FLAG_ACTIVITY_NEW_TASK: Inicia la actividad en una nueva tarea
+        }           //setFlags: Controla como manejar los Intents
     }
 
-    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result){
-            if(result.getResultCode() == Activity.RESULT_OK){
-                Intent intent = result.getData();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Si el requestCode es igual a 100
+        // requestCode: ayuda a identificar de qué Intención regresa
+        if(requestCode==100) {
+            // Inicializar tarea
+            Task<GoogleSignInAccount> signInAccountTask=GoogleSignIn.getSignedInAccountFromIntent(data);
 
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(intent);
+            // Si la tarea ha sido un exito
+            if(signInAccountTask.isSuccessful()) {
+                // Inicializar el inicio de sesion de la cuenta
                 try {
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    //Inicializar el inicio de sesion de la cuenta
+                    GoogleSignInAccount googleSignInAccount=signInAccountTask.getResult(ApiException.class);
 
-                    assert account != null;
-                    firebaseAuthWithGoogle(account.getIdToken());
-                    Log.i(TAG, "Ha sido un exito2", task.getException());
-                } catch (ApiException e) {
-                    Log.i(TAG, "Ha sido un fracaso2", task.getException());
-                }
+                    // Cuando la cuenta no es nulo
+                    if(googleSignInAccount!=null) {
+                        // Inicializar autenticación de credenciales
+                        // AuthCredential: Representa una credencial que el servidor de Firebase Authentication puede usar para autenticar a un usuario
+                        AuthCredential authCredential= GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(),null);
 
-            }
+                        // Comprobar las credenciales
+                        firebaseAuth.signInWithCredential(authCredential)
+                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        // Sale bien
+                                        if(task.isSuccessful()) {
+                                            // Te manda a la actividad UserProfileActivity
+                                            startActivity(new Intent(MainActivity.this
+                                                    ,UserProfileActivity.class)
+                                                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-        }
-    });
-
-    //Autenticar el firebase con Google
-    private void firebaseAuthWithGoogle(String idToken) {
-        //Obtener las credenciales
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        //Loguear con las credenciales
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        // Si se ha registrado sin problemas te mandará a otra actividad
-                        if (task.isSuccessful()) {
-                            startActivity(new Intent(MainActivity.this, pokedex.class));
-                            //Obtener el usuario con sesión activa
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            Toast.makeText(MainActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "Ha sido un exito", task.getException());
-                        // Si no has podido registrar
-                        } else {
-                            Toast.makeText(MainActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "Ha sido un fracaso", task.getException());
-                        }
-
+                                            Toast.makeText(MainActivity.this, "Has entrado", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            // Sale mal
+                                            Toast.makeText(MainActivity.this, "No has entrado", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                     }
-                });
+                }
+                catch (ApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
