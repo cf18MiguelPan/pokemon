@@ -85,8 +85,8 @@ public class pokedex extends AppCompatActivity{
         });
         Anterior.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (iterador >= 1118) {
-                    iterador = 1118;
+                if (iterador <= 1) {
+                    iterador = 1;
                     String pokSearch = String.valueOf(iterador);
                     com.example.pokemon.fetchData process = new com.example.pokemon.fetchData(pokSearch);
                     process.execute();
