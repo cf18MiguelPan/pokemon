@@ -7,6 +7,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.ahmadrosid.svgloader.SvgLoader;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -101,14 +104,30 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         // Set info
         pokedex.txtDisplay.setText(this.results);
 
-        // Set main img
+        /*Glide.with(pokedex.act)
+                .load("http://pokeapi.co/media/sprites/pokemon/"+pokSearch+".png")
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(img, pokedex.imgPok);*/
+
+
         /*SvgLoader.pluck()
                 .with(pokedex.act)
                 .load(img, pokedex.imgPok);*/
 
-        // Set img types
+
+        // For que recorre la cantidad de tipo que representa el pokémon
         for(int i=0; i<strTypes.size(); i++){
-            pokedex.imgType[i].setImageResource(pokedex.act.getResources().getIdentifier(strTypes.get(i), "drawable", pokedex.act.getPackageName()));
+            //En caso de que sale sólo 1 tipo
+            pokedex.imgType[0].setImageResource(pokedex.act.getResources().getIdentifier(strTypes.get(0), "drawable", pokedex.act.getPackageName()));
+
+            //En caso de que sale 2 tipos
+            if(strTypes.size()>1){
+                pokedex.imgType[1].setImageResource(pokedex.act.getResources().getIdentifier(strTypes.get(1), "drawable", pokedex.act.getPackageName()));
+            }else{
+                //Elimina el tipo 2 residual que quedaba antes
+                pokedex.imgType[1].setImageResource(R.drawable.blanco);
+            }
+
         }
 
     }

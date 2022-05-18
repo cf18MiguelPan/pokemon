@@ -99,14 +99,14 @@ public class pokedex extends AppCompatActivity{
             }
         });
 
-        ImageButton btnSearch = findViewById(R.id.btnSearch);
+        Button btnSearch = findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showTxtSearch();
             }
         });
 
-        ImageButton btnTypes = findViewById(R.id.btnTypes);
+        Button btnTypes = findViewById(R.id.btnTypes);
         btnTypes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ShowTipos();

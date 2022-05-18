@@ -45,18 +45,18 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
         firebaseAuth=FirebaseAuth.getInstance();                        // Inicializar inicializa la instancia FirebaseAuth
-        FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();        // Inicializar usuario de firebase
+        FirebaseUser usuario=firebaseAuth.getCurrentUser();        // Inicializar usuario de firebase
 
         // Cuando el usuario de firebase no es nulo
-        if(firebaseUser!=null) {
+        if(usuario!=null) {
             // La foto de perfil de la cuenta
             Glide.with(UserProfileActivity.this)
-                    .load(firebaseUser.getPhotoUrl())
+                    .load(usuario.getPhotoUrl())
                     .into(Image);
             // Nombre de la cuenta
-            Name.setText(firebaseUser.getDisplayName());
+            Name.setText(usuario.getDisplayName());
             // Email de la cuenta
-            Email.setText(firebaseUser.getEmail());
+            Email.setText(usuario.getEmail());
         }
 
         // Inicializar el inicio de sesión cliente
