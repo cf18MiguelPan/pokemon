@@ -35,7 +35,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
     public fetchData(String pokSearch) {
         this.pokSearch = pokSearch;
-        strTypes = new ArrayList<String>();
+        strTypes = new ArrayList<>();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             if(strTypes.size()>1){
                 pokedex.imgType[1].setImageResource(pokedex.act.getResources().getIdentifier(strTypes.get(1), "drawable", pokedex.act.getPackageName()));
             }else{
-                //Elimina el tipo 2 residual que quedaba antes
+                //Cambia a color blanco el fondo al haber un tipo residual
                 pokedex.imgType[1].setImageResource(R.drawable.blanco);
             }
 

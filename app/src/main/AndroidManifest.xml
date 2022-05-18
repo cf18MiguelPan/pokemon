@@ -12,13 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokemon">
         <activity
+            android:name=".usuarios"
+            android:exported="false" />
+        <activity
+            android:name=".equipos"
+            android:exported="false" />
+        <activity
             android:name=".UserProfileActivity"
             android:exported="false" />
-
         <activity
             android:name=".pokedex"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">

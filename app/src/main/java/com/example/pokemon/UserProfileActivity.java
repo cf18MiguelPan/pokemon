@@ -97,5 +97,12 @@ public class UserProfileActivity extends AppCompatActivity {
         Intent i = new Intent(this, pokedex.class);
         startActivity(i);
     }
-
+    private void IrEquipos() {
+        Intent i = new Intent(this, equipos.class);
+        startActivity(i);
+    }
+    private void IrUsuarios() {
+        Intent i = new Intent(this, pokedex.class);
+        startActivity(i);
+    }
 }
