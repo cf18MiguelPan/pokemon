@@ -29,6 +29,8 @@ public class pokedex extends AppCompatActivity{
     Button Inicio;
     Button Final;
 
+    ImageButton MeGusta;
+
     public static ImageView [] imgType;
 
     @Override
@@ -51,27 +53,40 @@ public class pokedex extends AppCompatActivity{
         Inicio=findViewById(R.id.btnInicio);
         Final=findViewById(R.id.btnFinal);
 
+        MeGusta=findViewById(R.id.btnLike);
+
+        MeGusta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
+        //Mostrar los pokemon a partir del inicio 1>>>>>898
         Inicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 com.example.pokemon.fetchData process = new com.example.pokemon.fetchData("1");
+                iterador = 1;
                 process.execute();
             }
         });
+
+        //Mostrar los pokemon a partir del final 898>>>>>1
         Final.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 com.example.pokemon.fetchData process = new com.example.pokemon.fetchData("898");
+                iterador = 898;
                 process.execute();
             }
         });
 
         Siguiente.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (iterador >= 1118) {
-                    iterador = 1118;
+                if (iterador >= 898) {
+                    iterador = 898;
                     String pokSearch = String.valueOf(iterador);
                     com.example.pokemon.fetchData process = new com.example.pokemon.fetchData(pokSearch);
                     process.execute();
@@ -106,13 +121,6 @@ public class pokedex extends AppCompatActivity{
             }
         });
 
-        Button btnTypes = findViewById(R.id.btnTypes);
-        btnTypes.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ShowTipos();
-            }
-        });
-
         com.example.pokemon.fetchData process = new com.example.pokemon.fetchData("1");
         process.execute();
     }
@@ -142,24 +150,6 @@ public class pokedex extends AppCompatActivity{
     }
 
 
-    public void ShowTipos(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("Escoge el tipo de pokemon");
-        builder.setItems(R.array.tipos, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-            /*
-            fetchType process1 = new fetchType("type/");
-            process1.execute();
-            */
-                BuscaTipo = ListaTipo[which];
-                com.example.pokemon.fetchType process1 = new com.example.pokemon.fetchType(BuscaTipo);
-                process1.execute();
-            }
-        });
-        Dialog dialog=builder.create();
-        dialog.show();
-    }
 
 
 }

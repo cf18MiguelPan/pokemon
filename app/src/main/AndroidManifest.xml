@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pokemon">
         <activity
+            android:name=".favoritos"
+            android:exported="false" />
+        <activity
             android:name=".usuarios"
             android:exported="false" />
         <activity

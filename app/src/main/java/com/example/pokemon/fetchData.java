@@ -1,16 +1,13 @@
 package com.example.pokemon;
 
 
-import android.app.Activity;
-import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Button;
 
-import com.ahmadrosid.svgloader.SvgLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.DiskCache;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,10 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class fetchData extends AsyncTask<Void, Void, Void> {
 
@@ -78,16 +74,10 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         try {
             jObject = new JSONObject(data);
 
-            // Get JSON name, height, weight
+            // Get JSON name, height, weight // Obtener la info del pokemon
             results += "Name: " + jObject.getString("name").toUpperCase() + "\n" +
                     "Height: " + jObject.getString("height") + "\n" +
                     "Weight: " + jObject.getString("weight");
-
-            // Get img SVG
-            JSONObject sprites = new JSONObject(jObject.getString("sprites"));
-            JSONObject other = new JSONObject(sprites.getString("other"));
-            JSONObject dream_world = new JSONObject(other.getString("dream_world"));
-            img  = dream_world.getString("front_default");
 
             // Get type/types
             JSONArray types = new JSONArray(jObject.getString("types"));
@@ -100,20 +90,12 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
 
-
         // Set info
-        pokedex.txtDisplay.setText(this.results);
+        pokedex.txtDisplay.setText(this.results);           //Info del pokemon
 
-        /*Glide.with(pokedex.act)
-                .load("http://pokeapi.co/media/sprites/pokemon/"+pokSearch+".png")
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(img, pokedex.imgPok);*/
-
-
-        /*SvgLoader.pluck()
-                .with(pokedex.act)
-                .load(img, pokedex.imgPok);*/
-
+        Glide.with(pokedex.act)             //activity
+                .load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"+pokSearch+".png")     //Cargar en la url la foto
+                .into(pokedex.imgPok);//establecer la foto en el imgview llamado:imgPok
 
         // For que recorre la cantidad de tipo que representa el pokémon
         for(int i=0; i<strTypes.size(); i++){
@@ -131,4 +113,5 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         }
 
     }
+
 }
